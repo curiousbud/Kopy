@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,8 @@ import {
 import { LogOut, User, Settings, LifeBuoy, Puzzle } from "lucide-react";
 
 export function UserNav() {
+  const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -35,15 +38,15 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem onSelect={() => router.push('/profile')}>
             <User className="mr-2" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem onSelect={() => router.push('/settings')}>
             <Settings className="mr-2" />
             <span>Settings</span>
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem onSelect={() => router.push('/plugins')}>
             <Puzzle className="mr-2" />
             <span>Plugins</span>
           </DropdownMenuItem>
