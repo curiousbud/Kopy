@@ -2,8 +2,6 @@
 
 Welcome to Kopy, a modern, minimalist, and AI-powered markdown note-taking application. Built with Next.js and Firebase, Kopy is designed to be your personal knowledge base, helping you capture, organize, and retrieve your thoughts with ease.
 
-
-
 ## ✨ Key Features
 
 *   **Minimalist Markdown Editor**: A clean, distraction-free interface for writing in Markdown.
@@ -76,13 +74,13 @@ This project uses Genkit, which requires a Google AI API key to function.
 
 ### 3. Running the Application
 
-You can now start the Next.js development server. This project uses a custom startup script (`start.js`) to automatically find an open port, preventing common port conflict errors.
+You can now start the Next.js development server.
 
 ```bash
 npm run dev
 ```
 
-The script will log the open port to your terminal. Open your browser and navigate to `http://localhost:<port>` to see the application running.
+The server will start, typically on `http://localhost:3000`. Open your browser and navigate to this URL to see the application running.
 
 ### 4. (Optional) Running the Genkit Developer UI
 
