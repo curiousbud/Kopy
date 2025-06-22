@@ -49,6 +49,7 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
   const [view, setView] = useState<'code' | 'preview'>('code');
   const [isSplit, setIsSplit] = useState(true);
   const isMobile = useIsMobile();
+  const [previewWindow, setPreviewWindow] = useState<Window | null>(null);
 
   useEffect(() => {
     if (isMobile) {
@@ -65,6 +66,31 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
 
   const preview = useMemo(() => renderMarkdown(content), [content]);
 
+  useEffect(() => {
+    // Update live preview window
+    if (previewWindow && !previewWindow.closed) {
+      const contentEl = previewWindow.document.getElementById('live-preview-content');
+      if (contentEl) {
+        contentEl.innerHTML = `<h1>${title}</h1>${preview.__html}`;
+      }
+      if (previewWindow.document.title !== `Preview: ${title}`) {
+        previewWindow.document.title = `Preview: ${title}`;
+      }
+    } else if (previewWindow?.closed) {
+      // Clean up state if user closes the window manually
+      setPreviewWindow(null);
+    }
+  }, [title, preview, previewWindow]);
+
+  useEffect(() => {
+    // When the component unmounts (e.g. note changes), close the preview window.
+    return () => {
+      if (previewWindow && !previewWindow.closed) {
+        previewWindow.close();
+      }
+    };
+  }, [previewWindow]);
+
   const handleExport = (format: 'md' | 'html') => {
     let blob: Blob;
     let filename: string;
@@ -72,7 +98,7 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
     const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
     if (format === 'md') {
-      blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+      blob = new Blob([`# ${title}\n\n${content}`], { type: 'text/markdown;charset=utf-8' });
       filename = `${sanitizedTitle || 'note'}.md`;
     } else {
       const htmlContent = `
@@ -95,6 +121,7 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
 </head>
 <body>
   <article class="prose">
+    <h1>${title}</h1>
     ${preview.__html}
   </article>
 </body>
@@ -114,8 +141,14 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
   };
 
   const handleOpenInNewWindow = () => {
-    const newWindow = window.open('', '_blank');
+    if (previewWindow && !previewWindow.closed) {
+      previewWindow.focus();
+      return;
+    }
+
+    const newWindow = window.open('', '_blank', 'width=800,height=600');
     if (newWindow) {
+      newWindow.document.title = `Preview: ${title}`;
       const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
@@ -148,14 +181,12 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
   </style>
 </head>
 <body>
-  <main class="prose">
-    <h1>${title}</h1>
-    ${preview.__html}
-  </main>
+  <main class="prose" id="live-preview-content"></main>
 </body>
 </html>`;
       newWindow.document.write(htmlContent);
       newWindow.document.close();
+      setPreviewWindow(newWindow);
     }
   };
 
