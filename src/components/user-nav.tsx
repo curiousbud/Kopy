@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings, LifeBuoy } from "lucide-react";
+import { LogOut, User, Settings, LifeBuoy, Puzzle } from "lucide-react";
 
 export function UserNav() {
   return (
@@ -35,21 +35,25 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem disabled>
             <User className="mr-2" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem disabled>
             <Settings className="mr-2" />
             <span>Settings</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            <Puzzle className="mr-2" />
+            <span>Plugins</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled>
             <LifeBuoy className="mr-2" />
             <span>Support</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem disabled>
           <LogOut className="mr-2" />
           <span>Log out</span>
         </DropdownMenuItem>
