@@ -23,6 +23,7 @@ import { Split, Eye, FileDown } from 'lucide-react';
 import type { Note } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTheme } from 'next-themes';
 
 /**
  * Defines the props for the NoteEditor component.
@@ -45,7 +46,8 @@ interface NoteEditorProps {
  */
 const renderMarkdown = (markdown: string) => {
   // Basic replacements for common markdown syntax.
-  let html = " " + markdown;
+  // We prepend a newline to make regex matching from the start of the string easier.
+  let html = "\n" + markdown;
   html = html
     .replace(/\n(#{1,6}) (.*)/g, (match, hashes, content) => `<h${hashes.length}>${content}</h${hashes.length}>`)
     .replace(/\n\> (.*)/g, '\n<blockquote>$1</blockquote>')
@@ -61,8 +63,10 @@ const renderMarkdown = (markdown: string) => {
 
   // Wrap remaining lines in <p> tags.
   html = html.split('\n').map(p => {
-    if (p.trim().length === 0) return "";
-    if (p.trim().startsWith('<h') || p.trim().startsWith('<ul') || p.trim().startsWith('<ol') || p.trim().startsWith('<block')) return p;
+    const trimmed = p.trim();
+    if (trimmed.length === 0) return "";
+    // Avoid wrapping elements that are already blocks.
+    if (trimmed.startsWith('<h') || trimmed.startsWith('<ul') || trimmed.startsWith('<ol') || trimmed.startsWith('<block')) return p;
     return `<p>${p}</p>`;
   }).join('');
     
@@ -85,8 +89,10 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
   const [isSplit, setIsSplit] = useState(true);
   // Custom hook to detect if the user is on a mobile device.
   const isMobile = useIsMobile();
-  // State to hold a reference to the live preview popup window.
-  const [previewWindow, setPreviewWindow] = useState<Window | null>(null);
+  // State to hold a reference to the live preview popup tab.
+  const [previewTab, setPreviewTab] = useState<Window | null>(null);
+  // Hook to get the current theme for the new tab preview.
+  const { theme } = useTheme();
 
   /**
    * Effect to disable split view on mobile devices.
@@ -114,33 +120,38 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
   const preview = useMemo(() => renderMarkdown(content), [content]);
 
   /**
-   * Effect to update the live preview popup window whenever the content changes.
+   * Effect to update the live preview tab whenever the content or theme changes.
    */
   useEffect(() => {
-    if (previewWindow && !previewWindow.closed) {
-      const contentEl = previewWindow.document.getElementById('live-preview-content');
+    if (previewTab && !previewTab.closed) {
+      const contentEl = previewTab.document.getElementById('live-preview-content');
       if (contentEl) {
-        contentEl.innerHTML = `<h1>${title}</h1>${preview.__html}`;
+        contentEl.innerHTML = `<h1 class="text-3xl font-bold font-headline mb-4">${title}</h1>${preview.__html}`;
       }
-      if (previewWindow.document.title !== `Preview: ${title}`) {
-        previewWindow.document.title = `Preview: ${title}`;
+      if (previewTab.document.title !== `Preview: ${title}`) {
+        previewTab.document.title = `Preview: ${title}`;
       }
-    } else if (previewWindow?.closed) {
-      setPreviewWindow(null); // Reset state if user closes the window.
+      // Ensure the theme in the preview tab matches the main app's theme.
+      const htmlEl = previewTab.document.documentElement;
+      if(htmlEl && htmlEl.className !== theme) {
+        htmlEl.className = theme || 'light';
+      }
+    } else if (previewTab?.closed) {
+      setPreviewTab(null); // Reset state if user closes the tab.
     }
-  }, [title, preview, previewWindow]);
+  }, [title, preview, previewTab, theme]);
 
   /**
-   * Effect to close the preview window when the component unmounts.
+   * Effect to close the preview tab when the component unmounts.
    * This prevents orphaned popup windows.
    */
   useEffect(() => {
     return () => {
-      if (previewWindow && !previewWindow.closed) {
-        previewWindow.close();
+      if (previewTab && !previewTab.closed) {
+        previewTab.close();
       }
     };
-  }, [previewWindow]);
+  }, [previewTab]);
 
   /**
    * Handles exporting the note to a file (Markdown or HTML).
@@ -156,7 +167,28 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
       blob = new Blob([`# ${title}\n\n${content}`], { type: 'text/markdown;charset=utf-8' });
       filename = `${sanitizedTitle || 'note'}.md`;
     } else {
-      const htmlContent = `...`; // Full HTML content for export
+      // Create a full, self-contained HTML document for export.
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${title}</title>
+            <style>
+                body { font-family: sans-serif; line-height: 1.6; padding: 2rem; max-width: 800px; margin: 0 auto; }
+                h1, h2, h3, h4, h5, h6 { line-height: 1.2; }
+                img { max-width: 100%; height: auto; border-radius: 8px; }
+                blockquote { border-left: 4px solid #ccc; padding-left: 1rem; color: #666; font-style: italic; }
+                code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+                pre { background-color: #f4f4f4; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+            </style>
+        </head>
+        <body>
+            ${renderMarkdown(content).__html}
+        </body>
+        </html>
+      `;
       blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
       filename = `${sanitizedTitle || 'note'}.html`;
     }
@@ -173,18 +205,50 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
   };
 
   /**
-   * Handles opening the live preview in a new browser window.
+   * Handles opening the live preview in a new browser tab.
+   * It injects styles to ensure the preview is consistent with the app's theme.
    */
-  const handleOpenInNewWindow = () => {
-    if (previewWindow && !previewWindow.closed) {
-      previewWindow.focus();
+  const handleOpenInNewTab = () => {
+    if (previewTab && !previewTab.closed) {
+      previewTab.focus();
       return;
     }
 
-    const newWindow = window.open('', '_blank', 'width=800,height=600');
-    if (newWindow) {
-      // ... code to write HTML structure into the new window ...
-      setPreviewWindow(newWindow);
+    const newTab = window.open('', '_blank');
+    if (newTab) {
+      newTab.document.open();
+      newTab.document.write(`
+        <!DOCTYPE html>
+        <html lang="en" class="${theme || 'light'}">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Preview: ${title}</title>
+            <style>
+              :root { --background: 0 0% 96.1%; --foreground: 240 10% 3.9%; --primary: 122 46% 34%; --muted: 0 0% 92.1%; --muted-foreground: 240 3.8% 46.1%; }
+              .dark { --background: 240 10% 3.9%; --foreground: 0 0% 98%; --primary: 122 46% 40%; --muted: 240 3.7% 15.9%; --muted-foreground: 240 5% 64.9%; }
+              body { background-color: hsl(var(--background)); color: hsl(var(--foreground)); font-family: "JetBrains Mono", monospace; padding: 2rem; }
+              .prose { line-height: 1.6; } .prose h1, .prose h2, .prose h3 { font-family: "Fira Code", monospace; font-weight: 700; margin: 1rem 0; }
+              .prose p { margin: 0.5rem 0; } .prose strong { font-weight: 700; } .prose em { font-style: italic; }
+              .prose a { color: hsl(var(--primary)); text-decoration: underline; }
+              .prose ul, .prose ol { list-style-position: inside; margin: 0.5rem 0; padding-left: 1.5rem; }
+              .prose li { margin: 0.25rem 0; } .prose img { max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); margin: 1.5rem 0; }
+              .prose blockquote { border-left: 4px solid hsl(var(--muted-foreground)); padding-left: 1rem; margin: 1rem 0; font-style: italic; color: hsl(var(--muted-foreground)); }
+              .prose code { background-color: hsl(var(--muted)); color: hsl(var(--muted-foreground)); padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-family: "JetBrains Mono", monospace; }
+              .prose pre { background-color: hsl(var(--muted)); padding: 1rem; border-radius: 0.375rem; overflow-x: auto; margin: 1rem 0; }
+              .prose pre code { background-color: transparent; padding: 0; }
+            </style>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+          </head>
+          <body>
+            <div id="live-preview-content" class="prose max-w-none"></div>
+          </body>
+        </html>
+      `);
+      newTab.document.close();
+      setPreviewTab(newTab);
     }
   };
 
@@ -194,7 +258,7 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
 
   return (
     <div className="flex flex-col h-full bg-background">
-        {/* Editor controls: view tabs, split view, new window, export. */}
+        {/* Editor controls: view tabs, split view, new tab, export. */}
         <div className="flex items-center justify-between p-2 border-b gap-2 flex-wrap">
             {/* View switcher for mobile (Code/Preview) */}
             <Tabs value={view} onValueChange={(v) => setView(v as 'code' | 'preview')} className={cn((isSplit && !isMobile) && 'opacity-50 pointer-events-none')}>
@@ -209,8 +273,8 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
                 <Button variant="ghost" size="icon" onClick={() => setIsSplit(!isSplit)} className="hidden md:inline-flex" title={isSplit ? "Single View" : "Split View"}>
                     <Split />
                 </Button>
-                {/* Open preview in new window button */}
-                <Button variant="ghost" size="icon" onClick={handleOpenInNewWindow} title="Open in new window">
+                {/* Open preview in new tab button */}
+                <Button variant="ghost" size="icon" onClick={handleOpenInNewTab} title="Open preview in new tab">
                     <Eye />
                 </Button>
                 {/* Export dropdown menu */}

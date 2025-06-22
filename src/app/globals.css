@@ -75,12 +75,12 @@
   .prose h1 { @apply text-4xl font-bold my-4; }
   .prose h2 { @apply text-3xl font-bold my-3; }
   .prose h3 { @apply text-2xl font-bold my-2; }
-  .prose p { @apply my-4 leading-relaxed; }
+  .prose p { @apply my-2 leading-relaxed; }
   .prose strong { @apply font-bold; }
   .prose em { @apply italic; }
   .prose a { @apply text-primary underline; }
-  .prose ul { @apply list-disc list-inside my-4; }
-  .prose ol { @apply list-decimal list-inside my-4; }
+  .prose ul { @apply list-disc list-inside my-2; }
+  .prose ol { @apply list-decimal list-inside my-2; }
   .prose li { @apply my-1; }
   .prose img { @apply rounded-lg shadow-md my-6; }
   .prose blockquote { @apply border-l-4 border-muted-foreground pl-4 italic text-muted-foreground; }
