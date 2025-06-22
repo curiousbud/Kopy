@@ -1,7 +1,17 @@
+/**
+ * @fileoverview A set of components for displaying data in a table.
+ *
+ * This provides basic, styled components for creating data tables, including
+ * `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, and `TableCell`.
+ *
+ * @see https://ui.shadcn.com/docs/components/table
+ */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/** The main `<table>` wrapper. It should be rendered inside a div with overflow for responsiveness. */
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
@@ -16,6 +26,7 @@ const Table = React.forwardRef<
 ))
 Table.displayName = "Table"
 
+/** The `<thead>` element for the table header row. */
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
@@ -24,6 +35,7 @@ const TableHeader = React.forwardRef<
 ))
 TableHeader.displayName = "TableHeader"
 
+/** The `<tbody>` element for the table body. */
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
@@ -36,6 +48,7 @@ const TableBody = React.forwardRef<
 ))
 TableBody.displayName = "TableBody"
 
+/** The `<tfoot>` element for the table footer. */
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
@@ -51,6 +64,7 @@ const TableFooter = React.forwardRef<
 ))
 TableFooter.displayName = "TableFooter"
 
+/** A `<tr>` element for a table row. */
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
@@ -66,6 +80,7 @@ const TableRow = React.forwardRef<
 ))
 TableRow.displayName = "TableRow"
 
+/** A `<th>` element for a table header cell. */
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
@@ -81,6 +96,7 @@ const TableHead = React.forwardRef<
 ))
 TableHead.displayName = "TableHead"
 
+/** A `<td>` element for a table data cell. */
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
@@ -93,6 +109,7 @@ const TableCell = React.forwardRef<
 ))
 TableCell.displayName = "TableCell"
 
+/** A `<caption>` element for the table. */
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
   React.HTMLAttributes<HTMLTableCaptionElement>
@@ -105,6 +122,7 @@ const TableCaption = React.forwardRef<
 ))
 TableCaption.displayName = "TableCaption"
 
+// Export all table components.
 export {
   Table,
   TableHeader,

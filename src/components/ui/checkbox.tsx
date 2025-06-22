@@ -1,3 +1,14 @@
+/**
+ * @fileoverview A checkbox component that can be used in forms.
+ *
+ * This component is built on top of Radix UI's Checkbox primitive, providing
+ * accessibility and keyboard navigation out of the box. It is styled with
+ * Tailwind CSS.
+ *
+ * @see https://ui.shadcn.com/docs/components/checkbox
+ * @see https://www.radix-ui.com/primitives/docs/components/checkbox
+ */
+
 "use client"
 
 import * as React from "react"
@@ -6,6 +17,9 @@ import { Check } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * The Checkbox component.
+ */
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
@@ -18,6 +32,7 @@ const Checkbox = React.forwardRef<
     )}
     {...props}
   >
+    {/* The check mark indicator, which is only visible when the checkbox is checked. */}
     <CheckboxPrimitive.Indicator
       className={cn("flex items-center justify-center text-current")}
     >

@@ -1,28 +1,53 @@
+/**
+ * @fileoverview This file contains mock data for the application.
+ *
+ * In a real-world application, this data would come from a database or an API.
+ * For demonstration purposes, we are using static arrays of objects. This file
+ * also defines the TypeScript interfaces for our core data models: Note, Notebook, and Tag.
+ */
+
+// Import the LucideIcon type for type safety, although it's not used in this file's runtime code.
 import type { LucideIcon } from "lucide-react";
 
+/**
+ * Defines the structure of a Tag object.
+ * @interface
+ */
 export interface Tag {
   id: string;
   name: string;
-  color: string;
+  color: string; // This would typically be a hex code, but here it's a Tailwind class.
 }
 
+/**
+ * Defines the structure of a Notebook object.
+ * @interface
+ */
 export interface Notebook {
   id: string;
   name: string;
-  icon?: LucideIcon;
+  icon?: LucideIcon; // An optional icon for the notebook.
 }
 
+/**
+ * Defines the structure of a Note object.
+ * @interface
+ */
 export interface Note {
   id: string;
   title: string;
-  content: string;
-  tags: string[]; // tag ids
-  notebookId: string;
-  starred: boolean;
-  createdAt: string;
-  updatedAt: string;
+  content: string; // The markdown content of the note.
+  tags: string[]; // An array of tag IDs associated with the note.
+  notebookId: string; // The ID of the notebook this note belongs to.
+  starred: boolean; // Whether the note is marked as a favorite.
+  createdAt: string; // ISO 8601 date string.
+  updatedAt: string; // ISO 8601 date string.
 }
 
+/**
+ * Mock data for tags.
+ * @type {Tag[]}
+ */
 export const tags: Tag[] = [
   { id: 'tag-1', name: 'work', color: 'text-red-500' },
   { id: 'tag-2', name: 'personal', color: 'text-blue-500' },
@@ -31,12 +56,20 @@ export const tags: Tag[] = [
   { id: 'tag-5', name: 'important', color: 'text-purple-500' },
 ];
 
+/**
+ * Mock data for notebooks.
+ * @type {Notebook[]}
+ */
 export const notebooks: Notebook[] = [
   { id: 'notebook-1', name: 'Project Phoenix' },
   { id: 'notebook-2', name: 'Meeting Notes' },
   { id: 'notebook-3', name: 'Personal Journal' },
 ];
 
+/**
+ * Mock data for notes.
+ * @type {Note[]}
+ */
 export const notes: Note[] = [
   {
     id: 'note-1',

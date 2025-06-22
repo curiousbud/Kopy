@@ -1,7 +1,20 @@
+/**
+ * @fileoverview A styled, multi-line text input component.
+ *
+ * This component provides a consistent style for `<textarea>` elements across
+ * the application, including focus and disabled states.
+ *
+ * @see https://ui.shadcn.com/docs/components/textarea
+ */
+
 import * as React from 'react';
 
 import {cn} from '@/lib/utils';
 
+/**
+ * The Textarea component. It's a `forwardRef` component to allow passing
+ * a ref to the underlying `<textarea>` element.
+ */
 const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<'textarea'>>(
   ({className, ...props}, ref) => {
     return (

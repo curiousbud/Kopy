@@ -1,48 +1,12 @@
+/**
+ * @fileoverview Deprecated authentication context.
+ *
+ * This file previously contained an authentication context using Firebase.
+ * It has been replaced by `next-auth`, which provides its own `SessionProvider`
+ * and `useSession` hook for managing authentication state.
+ *
+ * This file is no longer used and can be safely deleted from the project.
+ * It is kept here only to document the transition.
+ */
 
-'use client';
-
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-
-interface User {
-  name: string;
-  email: string;
-  avatar: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const mockUser: User = {
-  name: 'Kopy User',
-  email: 'user@example.com',
-  avatar: 'https://placehold.co/40x40.png',
-};
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(mockUser);
-  const router = useRouter();
-
-  const logout = () => {
-    setUser(null);
-    router.push('/');
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
+// This file is intentionally left empty.

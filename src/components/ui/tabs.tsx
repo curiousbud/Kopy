@@ -1,3 +1,13 @@
+/**
+ * @fileoverview A set of components for building tabbed interfaces.
+ *
+ * This allows users to navigate between different views within the same context.
+ * It's built on Radix UI's Tabs primitive for accessibility.
+ *
+ * @see https://ui.shadcn.com/docs/components/tabs
+ * @see https://www.radix-ui.com/primitives/docs/components/tabs
+ */
+
 "use client"
 
 import * as React from "react"
@@ -5,8 +15,10 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
 
+/** The root component for the tabs. */
 const Tabs = TabsPrimitive.Root
 
+/** The container for the list of tab triggers. */
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -22,6 +34,7 @@ const TabsList = React.forwardRef<
 ))
 TabsList.displayName = TabsPrimitive.List.displayName
 
+/** The button that activates a specific tab. */
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
@@ -37,6 +50,7 @@ const TabsTrigger = React.forwardRef<
 ))
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
+/** The content panel for a specific tab. */
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>

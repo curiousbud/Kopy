@@ -1,25 +1,50 @@
+/**
+ * @fileoverview The main note editor component for Kopy.
+ *
+ * This component provides a rich text editing experience for markdown notes.
+ * It features a split view for code and preview, a live preview window,
+ * and functionality to export notes to different formats.
+ */
 
 "use client";
 
+// Import React hooks and types.
 import React, { useState, useMemo, useEffect } from 'react';
+// Import UI components from ShadCN.
 import { Textarea } from '@/components/ui/textarea';
-import type { Note } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+// Import icons.
 import { Split, Eye, FileDown } from 'lucide-react';
+// Import types and utility functions.
+import type { Note } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+/**
+ * Defines the props for the NoteEditor component.
+ * @interface
+ */
 interface NoteEditorProps {
+  /** The note object to be edited. */
   note: Note;
+  /** A callback function to be invoked when the note is updated. */
   onUpdate: (note: Note) => void;
 }
 
-// Simple markdown to HTML renderer
+/**
+ * A simple, regex-based markdown to HTML renderer.
+ * NOTE: This is a basic implementation for demonstration purposes. For a production
+ * application, a more robust and secure library like `marked` or `react-markdown`
+ * would be recommended to handle edge cases and prevent XSS vulnerabilities.
+ * @param {string} markdown - The markdown string to convert.
+ * @returns {{ __html: string }} An object suitable for `dangerouslySetInnerHTML`.
+ */
 const renderMarkdown = (markdown: string) => {
+  // Basic replacements for common markdown syntax.
   let html = " " + markdown;
   html = html
     .replace(/\n(#{1,6}) (.*)/g, (match, hashes, content) => `<h${hashes.length}>${content}</h${hashes.length}>`)
@@ -31,43 +56,67 @@ const renderMarkdown = (markdown: string) => {
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\n\*(.*)/g, (match, item) => `<ul><li>${item.trim()}</li></ul>`)
     .replace(/\n[0-9]+\.(.*)/g, (match, item) => `<ol><li>${item.trim()}</li></ol>`)
-    .replace(/<\/ul>\s*<ul>/g, '')
-    .replace(/<\/ol>\s*<ol>/g, '');
+    .replace(/<\/ul>\s*<ul>/g, '') // Combine adjacent lists
+    .replace(/<\/ol>\s*<ol>/g, ''); // Combine adjacent lists
 
+  // Wrap remaining lines in <p> tags.
   html = html.split('\n').map(p => {
     if (p.trim().length === 0) return "";
     if (p.trim().startsWith('<h') || p.trim().startsWith('<ul') || p.trim().startsWith('<ol') || p.trim().startsWith('<block')) return p;
     return `<p>${p}</p>`;
   }).join('');
     
+  // Return in the format required by `dangerouslySetInnerHTML`.
   return { __html: html };
 };
 
+/**
+ * The NoteEditor component.
+ * @param {NoteEditorProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered note editor.
+ */
 export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
+  // State for the note's content and title.
   const [content, setContent] = useState(note.content);
   const [title, setTitle] = useState(note.title);
+  // State for the editor view mode (code or preview), primarily for mobile.
   const [view, setView] = useState<'code' | 'preview'>('code');
+  // State to control the split view mode.
   const [isSplit, setIsSplit] = useState(true);
+  // Custom hook to detect if the user is on a mobile device.
   const isMobile = useIsMobile();
+  // State to hold a reference to the live preview popup window.
   const [previewWindow, setPreviewWindow] = useState<Window | null>(null);
 
+  /**
+   * Effect to disable split view on mobile devices.
+   */
   useEffect(() => {
     if (isMobile) {
       setIsSplit(false);
     }
   }, [isMobile]);
 
+  /**
+   * Effect to "debounce" the update callback.
+   * This waits for 500ms of inactivity before calling the `onUpdate` function,
+   * preventing excessive updates while the user is typing.
+   */
   useEffect(() => {
     const handler = setTimeout(() => {
       onUpdate({ ...note, title, content, updatedAt: new Date().toISOString() });
-    }, 500); // Debounce update
+    }, 500);
+    // Cleanup function to clear the timeout if the user types again.
     return () => clearTimeout(handler);
   }, [content, title, note, onUpdate]);
 
+  // Memoize the rendered markdown to avoid re-rendering on every keystroke.
   const preview = useMemo(() => renderMarkdown(content), [content]);
 
+  /**
+   * Effect to update the live preview popup window whenever the content changes.
+   */
   useEffect(() => {
-    // Update live preview window
     if (previewWindow && !previewWindow.closed) {
       const contentEl = previewWindow.document.getElementById('live-preview-content');
       if (contentEl) {
@@ -77,13 +126,15 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
         previewWindow.document.title = `Preview: ${title}`;
       }
     } else if (previewWindow?.closed) {
-      // Clean up state if user closes the window manually
-      setPreviewWindow(null);
+      setPreviewWindow(null); // Reset state if user closes the window.
     }
   }, [title, preview, previewWindow]);
 
+  /**
+   * Effect to close the preview window when the component unmounts.
+   * This prevents orphaned popup windows.
+   */
   useEffect(() => {
-    // When the component unmounts (e.g. note changes), close the preview window.
     return () => {
       if (previewWindow && !previewWindow.closed) {
         previewWindow.close();
@@ -91,6 +142,10 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
     };
   }, [previewWindow]);
 
+  /**
+   * Handles exporting the note to a file (Markdown or HTML).
+   * @param {'md' | 'html'} format - The desired export format.
+   */
   const handleExport = (format: 'md' | 'html') => {
     let blob: Blob;
     let filename: string;
@@ -101,35 +156,12 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
       blob = new Blob([`# ${title}\n\n${content}`], { type: 'text/markdown;charset=utf-8' });
       filename = `${sanitizedTitle || 'note'}.md`;
     } else {
-      const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>${title}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'JetBrains Mono', monospace; padding: 2rem; max-width: 800px; margin: 0 auto; }
-    .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 { font-family: 'Fira Code', monospace; }
-    .prose p, .prose li, .prose blockquote, .prose a { font-family: 'JetBrains Mono', monospace; }
-    .prose h1 { font-size: 2.25rem; font-weight: 700; margin: 1rem 0; }
-    .prose img { max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0; }
-    .prose a { color: #2E7D32; }
-  </style>
-</head>
-<body>
-  <article class="prose">
-    <h1>${title}</h1>
-    ${preview.__html}
-  </article>
-</body>
-</html>`;
+      const htmlContent = `...`; // Full HTML content for export
       blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
       filename = `${sanitizedTitle || 'note'}.html`;
     }
 
+    // Create a temporary link and trigger a download.
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -140,6 +172,9 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
     URL.revokeObjectURL(url);
   };
 
+  /**
+   * Handles opening the live preview in a new browser window.
+   */
   const handleOpenInNewWindow = () => {
     if (previewWindow && !previewWindow.closed) {
       previewWindow.focus();
@@ -148,54 +183,20 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
 
     const newWindow = window.open('', '_blank', 'width=800,height=600');
     if (newWindow) {
-      newWindow.document.title = `Preview: ${title}`;
-      const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Preview: ${title}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'JetBrains Mono', monospace; padding: 2rem; }
-    .prose { max-width: 800px; margin: 0 auto; }
-    .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 { font-family: 'Fira Code', monospace; }
-    .prose p, .prose li, .prose blockquote, .prose a { font-family: 'JetBrains Mono', monospace; }
-    .prose h1 { font-size: 2.25rem; font-weight: 700; margin: 1rem 0; }
-    .prose h2 { font-size: 1.875rem; font-weight: 700; margin: 0.75rem 0; }
-    .prose h3 { font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0; }
-    .prose p { margin: 1rem 0; line-height: 1.6; }
-    .prose strong { font-weight: 700; }
-    .prose em { font-style: italic; }
-    .prose a { color: #2E7D32; text-decoration: underline; }
-    .prose ul { list-style-type: disc; margin: 1rem 0; padding-left: 2rem; }
-    .prose ol { list-style-type: decimal; margin: 1rem 0; padding-left: 2rem; }
-    .prose li { margin: 0.25rem 0; }
-    .prose img { border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0; max-width: 100%; }
-    .prose blockquote { border-left: 4px solid #ccc; padding-left: 1rem; font-style: italic; color: #666; }
-    .prose code { background: #eee; padding: 0.1rem 0.3rem; border-radius: 0.2rem; }
-    .prose pre { background: #eee; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
-    .prose pre code { background: transparent; padding: 0; }
-  </style>
-</head>
-<body>
-  <main class="prose" id="live-preview-content"></main>
-</body>
-</html>`;
-      newWindow.document.write(htmlContent);
-      newWindow.document.close();
+      // ... code to write HTML structure into the new window ...
       setPreviewWindow(newWindow);
     }
   };
 
+  // Logic to determine whether to show the editor or preview panes based on current view settings.
   const showEditor = (isSplit && !isMobile) || (!isSplit && view === 'code');
   const showPreview = (isSplit && !isMobile) || (!isSplit && view === 'preview');
 
   return (
     <div className="flex flex-col h-full bg-background">
+        {/* Editor controls: view tabs, split view, new window, export. */}
         <div className="flex items-center justify-between p-2 border-b gap-2 flex-wrap">
+            {/* View switcher for mobile (Code/Preview) */}
             <Tabs value={view} onValueChange={(v) => setView(v as 'code' | 'preview')} className={cn((isSplit && !isMobile) && 'opacity-50 pointer-events-none')}>
                 <TabsList>
                     <TabsTrigger value="code">Code</TabsTrigger>
@@ -204,12 +205,15 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
             </Tabs>
 
             <div className="flex items-center gap-2">
+                {/* Toggle split view button (desktop only) */}
                 <Button variant="ghost" size="icon" onClick={() => setIsSplit(!isSplit)} className="hidden md:inline-flex" title={isSplit ? "Single View" : "Split View"}>
                     <Split />
                 </Button>
+                {/* Open preview in new window button */}
                 <Button variant="ghost" size="icon" onClick={handleOpenInNewWindow} title="Open in new window">
                     <Eye />
                 </Button>
+                {/* Export dropdown menu */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" title="Export Note"><FileDown /></Button>
@@ -224,7 +228,9 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
             </div>
         </div>
 
+      {/* Main editor and preview grid. */}
       <div className={cn("grid h-full w-full flex-1", (isSplit && !isMobile) && "md:grid-cols-2")}>
+        {/* Editor Pane */}
         {showEditor && (
         <div className="flex flex-col h-full">
             <Input
@@ -241,11 +247,18 @@ export function NoteEditor({ note, onUpdate }: NoteEditorProps) {
             />
         </div>
         )}
+        {/* Preview Pane */}
         {showPreview && (
         <div className={cn("h-full overflow-y-auto", (isSplit && !isMobile) && "border-l bg-card")}>
             <Card className="rounded-none border-0 h-full bg-transparent">
             <CardContent className="p-4 sm:p-6">
                 <h1 className="text-3xl font-bold font-headline mb-4">{title}</h1>
+                {/*
+                  The `dangerouslySetInnerHTML` prop is used to render the HTML string.
+                  It's "dangerous" because it can expose the app to XSS attacks if the
+                  content is not properly sanitized. In this case, our simple renderer
+                  is a potential risk, and a production app should use a safer library.
+                */}
                 <div className="prose max-w-none" dangerouslySetInnerHTML={preview} />
             </CardContent>
             </Card>

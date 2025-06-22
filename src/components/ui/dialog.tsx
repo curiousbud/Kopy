@@ -1,3 +1,14 @@
+/**
+ * @fileoverview A window overlaid on either the primary window or another dialog window.
+ *
+ * This file provides a set of components for creating modal dialogs. It's built on
+ * Radix UI's Dialog primitive and is styled with Tailwind CSS. Dialogs are useful
+ * for focusing the user's attention on a specific task or piece of information.
+ *
+ * @see https://ui.shadcn.com/docs/components/dialog
+ * @see https://www.radix-ui.com/primitives/docs/components/dialog
+ */
+
 "use client"
 
 import * as React from "react"
@@ -6,14 +17,19 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/** The root component for the dialog. */
 const Dialog = DialogPrimitive.Root
 
+/** The trigger that opens the dialog. */
 const DialogTrigger = DialogPrimitive.Trigger
 
+/** A portal that renders the dialog outside of the normal DOM flow. */
 const DialogPortal = DialogPrimitive.Portal
 
+/** A component to close the dialog, often used for a close button. */
 const DialogClose = DialogPrimitive.Close
 
+/** The semi-transparent overlay that covers the page behind the dialog. */
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -29,6 +45,7 @@ const DialogOverlay = React.forwardRef<
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
+/** The main content container for the dialog. */
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
@@ -44,6 +61,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
+      {/* The default close button (X icon) in the top-right corner. */}
       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
@@ -53,6 +71,7 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+/** A container for the dialog's header section. */
 const DialogHeader = ({
   className,
   ...props
@@ -67,6 +86,7 @@ const DialogHeader = ({
 )
 DialogHeader.displayName = "DialogHeader"
 
+/** A container for the dialog's footer, typically containing action buttons. */
 const DialogFooter = ({
   className,
   ...props
@@ -81,6 +101,7 @@ const DialogFooter = ({
 )
 DialogFooter.displayName = "DialogFooter"
 
+/** The title of the dialog. */
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
@@ -96,6 +117,7 @@ const DialogTitle = React.forwardRef<
 ))
 DialogTitle.displayName = DialogPrimitive.Title.displayName
 
+/** The description or message of the dialog. */
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
@@ -108,6 +130,7 @@ const DialogDescription = React.forwardRef<
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
+// Export all dialog components.
 export {
   Dialog,
   DialogPortal,

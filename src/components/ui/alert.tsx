@@ -1,8 +1,24 @@
+/**
+ * @fileoverview A component for displaying important, short messages.
+ *
+ * This file provides `Alert`, `AlertTitle`, and `AlertDescription` components
+ * that can be used to call attention to information. It includes variants for
+ * default and destructive messages.
+ *
+ * @see https://ui.shadcn.com/docs/components/alert
+ */
+
 import * as React from "react"
+// `cva` (class-variance-authority) is a library for creating variant-based component classes.
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Defines the variants for the alert component using `cva`.
+ * This allows for different styles (e.g., `default`, `destructive`)
+ * to be applied via props.
+ */
 const alertVariants = cva(
   "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
@@ -19,19 +35,25 @@ const alertVariants = cva(
   }
 )
 
+/**
+ * The main Alert component. It wraps the title and description.
+ */
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
 >(({ className, variant, ...props }, ref) => (
   <div
     ref={ref}
-    role="alert"
+    role="alert" // Important for accessibility.
     className={cn(alertVariants({ variant }), className)}
     {...props}
   />
 ))
 Alert.displayName = "Alert"
 
+/**
+ * The title of the alert.
+ */
 const AlertTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
@@ -44,6 +66,10 @@ const AlertTitle = React.forwardRef<
 ))
 AlertTitle.displayName = "AlertTitle"
 
+/**
+
+ * The main body/description of the alert.
+ */
 const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
@@ -56,4 +82,5 @@ const AlertDescription = React.forwardRef<
 ))
 AlertDescription.displayName = "AlertDescription"
 
+// Export the components for use.
 export { Alert, AlertTitle, AlertDescription }

@@ -1,3 +1,14 @@
+/**
+ * @fileoverview A collection of components for building accessible forms with `react-hook-form`.
+ *
+ * This file provides a set of components that integrate `react-hook-form` with
+ * ShadCN's UI components, making it easier to handle form state, validation,
+ * and error messages in a structured and accessible way.
+ *
+ * @see https://ui.shadcn.com/docs/components/form
+ * @see https://react-hook-form.com/
+ */
+
 "use client"
 
 import * as React from "react"
@@ -15,19 +26,27 @@ import {
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 
+/**
+ * The `FormProvider` component from `react-hook-form`. This should wrap your entire form
+ * and is initialized with the form methods returned by `useForm`.
+ */
 const Form = FormProvider
 
+// Context to provide field-specific information down to child components.
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
   name: TName
 }
-
 const FormFieldContext = React.createContext<FormFieldContextValue>(
   {} as FormFieldContextValue
 )
 
+/**
+ * The `FormField` component. It's a wrapper around `react-hook-form`'s `Controller`,
+ * which connects your form inputs to the form state.
+ */
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -41,6 +60,10 @@ const FormField = <
   )
 }
 
+/**
+ * A custom hook to access field-specific state and context.
+ * It must be used within a `FormField` component.
+ */
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext)
   const itemContext = React.useContext(FormItemContext)
@@ -64,14 +87,17 @@ const useFormField = () => {
   }
 }
 
+// Context to provide a unique ID for a form item, used for ARIA attributes.
 type FormItemContextValue = {
   id: string
 }
-
 const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue
 )
 
+/**
+ * A wrapper component for a single form field, including its label, input, description, and error message.
+ */
 const FormItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -86,6 +112,10 @@ const FormItem = React.forwardRef<
 })
 FormItem.displayName = "FormItem"
 
+/**
+ * The label for a form field. It's automatically associated with the input
+ * via `htmlFor` and changes color if there's an error.
+ */
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
@@ -103,6 +133,10 @@ const FormLabel = React.forwardRef<
 })
 FormLabel.displayName = "FormLabel"
 
+/**
+ * A wrapper for the form input component (e.g., `<Input />`, `<Textarea />`).
+ * It automatically adds the necessary ARIA attributes for accessibility.
+ */
 const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
@@ -125,6 +159,9 @@ const FormControl = React.forwardRef<
 })
 FormControl.displayName = "FormControl"
 
+/**
+ * A component to provide additional information or help text for a form field.
+ */
 const FormDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
@@ -142,6 +179,10 @@ const FormDescription = React.forwardRef<
 })
 FormDescription.displayName = "FormDescription"
 
+/**
+ * A component to display validation error messages for a form field.
+ * It only renders when there is an error.
+ */
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
@@ -166,6 +207,7 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = "FormMessage"
 
+// Export all form-related components.
 export {
   useFormField,
   Form,

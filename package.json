@@ -1,19 +1,16 @@
+
 {
   "name": "nextn",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
-    "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@genkit-ai/googleai": "^1.7.0",
-    "@genkit-ai/next": "^1.7.0",
     "@hookform/resolvers": "^4.1.0",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
@@ -39,9 +36,9 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
-    "genkit": "^1.7.0",
     "lucide-react": "^0.481.0",
     "next": "^14.2.5",
+    "next-auth": "4.24.7",
     "next-themes": "^0.3.0",
     "patch-package": "^8.0.0",
     "react": "^18.3.1",
@@ -56,7 +53,6 @@
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "genkit-cli": "^1.7.0",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3"

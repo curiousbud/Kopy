@@ -1,3 +1,14 @@
+/**
+ * @fileoverview A calendar component for date selection.
+ *
+ * This component is a wrapper around `react-day-picker`, styled with Tailwind CSS
+ * to match the ShadCN UI design system. It allows for single date selection,
+ * range selection, and more.
+ *
+ * @see https://ui.shadcn.com/docs/components/calendar
+ * @see https://react-day-picker.js.org/
+ */
+
 "use client"
 
 import * as React from "react"
@@ -7,18 +18,25 @@ import { DayPicker } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
+// Defines the props for the Calendar component, which are the same as react-day-picker's props.
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
+/**
+ * The Calendar component.
+ * @param {CalendarProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered calendar.
+ */
 function Calendar({
   className,
   classNames,
-  showOutsideDays = true,
+  showOutsideDays = true, // Show days from previous/next month by default.
   ...props
 }: CalendarProps) {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
+      // A comprehensive set of classes to style every part of the calendar.
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -53,6 +71,7 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
+      // Replace the default navigation icons with lucide-react icons.
       components={{
         IconLeft: ({ className, ...props }) => (
           <ChevronLeft className={cn("h-4 w-4", className)} {...props} />

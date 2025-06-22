@@ -1,7 +1,21 @@
+/**
+ * @fileoverview A basic, styled input component.
+ *
+ * This component provides a consistent style for text-based input fields
+ * across the application, including focus states and disabled states.
+ *
+ * @see https://ui.shadcn.com/docs/components/input
+ */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * The Input component. It's a `forwardRef` component, which allows it to
+ * receive a ref and pass it down to the underlying `<input>` element. This
+ * is important for form libraries and for focusing the element programmatically.
+ */
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
     return (

@@ -1,7 +1,20 @@
+/**
+ * @fileoverview A set of components for building card-based layouts.
+ *
+ * This file provides flexible `Card` components that can be composed to create
+ * various card layouts. It includes `Card`, `CardHeader`, `CardTitle`,
+ * `CardDescription`, `CardContent`, and `CardFooter`.
+ *
+ * @see https://ui.shadcn.com/docs/components/card
+ */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * The main container for the card.
+ */
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -17,6 +30,9 @@ const Card = React.forwardRef<
 ))
 Card.displayName = "Card"
 
+/**
+ * The header section of the card. Typically contains the title and description.
+ */
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -29,6 +45,9 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = "CardHeader"
 
+/**
+ * The title of the card. Should be used inside a `CardHeader`.
+ */
 const CardTitle = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -44,6 +63,9 @@ const CardTitle = React.forwardRef<
 ))
 CardTitle.displayName = "CardTitle"
 
+/**
+ * The description for the card. Should be used inside a `CardHeader`.
+ */
 const CardDescription = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -56,6 +78,9 @@ const CardDescription = React.forwardRef<
 ))
 CardDescription.displayName = "CardDescription"
 
+/**
+ * The main content area of the card.
+ */
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -64,6 +89,9 @@ const CardContent = React.forwardRef<
 ))
 CardContent.displayName = "CardContent"
 
+/**
+ * The footer section of the card. Often used for action buttons.
+ */
 const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -76,4 +104,5 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
+// Export all card-related components.
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

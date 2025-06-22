@@ -1,3 +1,14 @@
+/**
+ * @fileoverview An avatar component to display user profile pictures or fallbacks.
+ *
+ * This file provides `Avatar`, `AvatarImage`, and `AvatarFallback` components.
+ * It gracefully handles showing a fallback (e.g., user's initials) if the
+ * image fails to load or is not provided. It's built on Radix UI's Avatar primitive.
+ *
+ * @see https://ui.shadcn.com/docs/components/avatar
+ * @see https://www.radix-ui.com/primitives/docs/components/avatar
+ */
+
 "use client"
 
 import * as React from "react"
@@ -5,6 +16,9 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * The root container for an avatar.
+ */
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
@@ -20,6 +34,10 @@ const Avatar = React.forwardRef<
 ))
 Avatar.displayName = AvatarPrimitive.Root.displayName
 
+/**
+ * The image to be displayed in the avatar.
+ * This will be hidden automatically if the image fails to load.
+ */
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
@@ -32,6 +50,10 @@ const AvatarImage = React.forwardRef<
 ))
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
+/**
+ * A fallback that is displayed if the `AvatarImage` is not provided
+ * or fails to load. Typically used for displaying initials.
+ */
 const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Fallback>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
@@ -47,4 +69,5 @@ const AvatarFallback = React.forwardRef<
 ))
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
 
+// Export the components.
 export { Avatar, AvatarImage, AvatarFallback }

@@ -1,3 +1,13 @@
+/**
+ * @fileoverview A popover component that displays content floating over the UI.
+ *
+ * This component is used to show rich content in a portal, triggered by a button
+ * or other element. It's built on Radix UI's Popover primitive for accessibility.
+ *
+ * @see https://ui.shadcn.com/docs/components/popover
+ * @see https://www.radix-ui.com/primitives/docs/components/popover
+ */
+
 "use client"
 
 import * as React from "react"
@@ -5,10 +15,13 @@ import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
 
+/** The root component for the popover. */
 const Popover = PopoverPrimitive.Root
 
+/** The trigger that opens the popover. */
 const PopoverTrigger = PopoverPrimitive.Trigger
 
+/** The content container for the popover. */
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
@@ -28,4 +41,5 @@ const PopoverContent = React.forwardRef<
 ))
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
+// Export the Popover components.
 export { Popover, PopoverTrigger, PopoverContent }

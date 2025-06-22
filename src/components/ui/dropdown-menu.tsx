@@ -1,3 +1,14 @@
+/**
+ * @fileoverview A set of components for creating dropdown menus.
+ *
+ * This file provides a comprehensive suite of components for building dropdowns,
+ * including submenus, checkboxes, and radio groups. It is built on Radix UI's
+ * Dropdown Menu primitive for accessibility and keyboard navigation.
+ *
+ * @see https://ui.shadcn.com/docs/components/dropdown-menu
+ * @see https://www.radix-ui.com/primitives/docs/components/dropdown-menu
+ */
+
 "use client"
 
 import * as React from "react"
@@ -6,18 +17,25 @@ import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/** The root component for the dropdown menu. */
 const DropdownMenu = DropdownMenuPrimitive.Root
 
+/** The trigger that opens the dropdown menu. */
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 
+/** A container for grouping items within the menu. */
 const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
+/** A portal that renders the dropdown menu outside of the normal DOM flow. */
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal
 
+/** A container for a submenu. */
 const DropdownMenuSub = DropdownMenuPrimitive.Sub
 
+/** A container for a group of radio button items. */
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
+/** The trigger that opens a submenu. */
 const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
@@ -40,6 +58,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
 DropdownMenuSubTrigger.displayName =
   DropdownMenuPrimitive.SubTrigger.displayName
 
+/** The content container for a submenu. */
 const DropdownMenuSubContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
@@ -56,6 +75,7 @@ const DropdownMenuSubContent = React.forwardRef<
 DropdownMenuSubContent.displayName =
   DropdownMenuPrimitive.SubContent.displayName
 
+/** The main content container for the dropdown menu. */
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
@@ -74,6 +94,7 @@ const DropdownMenuContent = React.forwardRef<
 ))
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
+/** A standard, clickable item in the dropdown menu. */
 const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
@@ -92,6 +113,7 @@ const DropdownMenuItem = React.forwardRef<
 ))
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
 
+/** A menu item that can be checked or unchecked. */
 const DropdownMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
@@ -116,6 +138,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 DropdownMenuCheckboxItem.displayName =
   DropdownMenuPrimitive.CheckboxItem.displayName
 
+/** A menu item that is part of a radio group, where only one can be selected. */
 const DropdownMenuRadioItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
@@ -138,6 +161,7 @@ const DropdownMenuRadioItem = React.forwardRef<
 ))
 DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
 
+/** A non-interactive label for a group of items. */
 const DropdownMenuLabel = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
@@ -156,6 +180,7 @@ const DropdownMenuLabel = React.forwardRef<
 ))
 DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName
 
+/** A separator line between items or groups. */
 const DropdownMenuSeparator = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
@@ -168,6 +193,7 @@ const DropdownMenuSeparator = React.forwardRef<
 ))
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
+/** A component for displaying a keyboard shortcut next to a menu item. */
 const DropdownMenuShortcut = ({
   className,
   ...props
@@ -181,6 +207,7 @@ const DropdownMenuShortcut = ({
 }
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
 
+// Export all components.
 export {
   DropdownMenu,
   DropdownMenuTrigger,
