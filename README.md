@@ -2,7 +2,7 @@
 
 Welcome to Kopy, a modern, minimalist, and AI-powered markdown note-taking application. Built with Next.js and Firebase, Kopy is designed to be your personal knowledge base, helping you capture, organize, and retrieve your thoughts with ease.
 
-![Kopy Screenshot](https://placehold.co/800x500.png)
+
 
 ## ✨ Key Features
 
