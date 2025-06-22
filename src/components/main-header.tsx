@@ -33,12 +33,12 @@ export function MainHeader() {
         </div>
         <nav className="flex items-center gap-1 text-sm">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} passHref>
-                <Button variant={pathname.startsWith(link.href) && link.href !=='/' || pathname === '/' && link.href === '/' ? "secondary" : "ghost"} size="sm">
+            <Button asChild key={link.href} variant={pathname.startsWith(link.href) && link.href !=='/' || pathname === '/' && link.href === '/' ? "secondary" : "ghost"} size="sm">
+                <Link href={link.href}>
                     <link.icon className="mr-2 h-4 w-4" />
                     {link.label}
-                </Button>
-            </Link>
+                </Link>
+            </Button>
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
