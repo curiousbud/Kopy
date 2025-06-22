@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -13,26 +14,36 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User, Settings, LifeBuoy, Puzzle } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
 
 export function UserNav() {
   const router = useRouter();
+  const { user, logout } = useAuth();
+
+  const handleSupport = () => {
+    window.location.href = "mailto:support@kopy.app";
+  };
+
+  if (!user) {
+    return null; 
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
-            <AvatarImage src="https://placehold.co/40x40.png" data-ai-hint="person portrait" alt="@user" />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarImage src={user.avatar} data-ai-hint="person portrait" alt={user.name} />
+            <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none font-headline">Kopy User</p>
+            <p className="text-sm font-medium leading-none font-headline">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              user@example.com
+              {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -50,13 +61,13 @@ export function UserNav() {
             <Puzzle className="mr-2" />
             <span>Plugins</span>
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem onSelect={handleSupport}>
             <LifeBuoy className="mr-2" />
             <span>Support</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
+        <DropdownMenuItem onSelect={logout}>
           <LogOut className="mr-2" />
           <span>Log out</span>
         </DropdownMenuItem>
