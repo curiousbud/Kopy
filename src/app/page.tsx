@@ -23,6 +23,7 @@ import { notes as initialNotes, notebooks, tags } from "@/lib/data";
 import { Search, PlusCircle, Star, Tag as TagIcon, Trash2, BookCopy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -162,7 +163,8 @@ export default function Home() {
           <div className="hidden md:block font-medium font-headline text-muted-foreground">
             {selectedNote?.title || 'Kopy'}
           </div>
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-2 ml-auto">
+            <ThemeToggle />
             <UserNav />
           </div>
         </header>
