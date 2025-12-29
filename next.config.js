@@ -7,10 +7,6 @@
  * @see https://nextjs.org/docs/api-reference/next.config.js/introduction
  */
 
-// We import the necessary types from the 'next' package to ensure type safety.
-import pkg from 'next';
-const { NextConfig } = pkg;
-
 const nextConfig = {
   /**
    * TypeScript configuration options.
@@ -59,4 +55,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
