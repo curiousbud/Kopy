@@ -127,7 +127,7 @@ This document outlines the initial proposal for Project Phoenix.
 
 The air was crisp and clean. A welcome escape from the city hustle.
 
-![A scenic view of snow-capped mountains under a clear blue sky](https://placehold.co/600x400.png)
+![A scenic view of snow-capped mountains under a clear blue sky](https://picsum.photos/seed/1/600/400)
 *A photo I took from the cabin.*
 
 I feel refreshed and ready for the next challenge.
